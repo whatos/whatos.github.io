@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>纸屿 · 个人志</title>
+<meta name="description" content="一本安静的个人小志 · 记录雨、散步与旧物">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f5f0e6'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23c8451f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=Noto+Serif+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ BASE / PAPER ============ */
+:root{
+  --paper:      #f5f0e4;
+  --paper-deep: #efe8d8;
+  --ink:        #2b2620;
+  --ink-soft:   #6f6656;
+  --ink-faint:  #a39a86;
+  --rule:       #d9d0ba;
+  --accent:     #c8451f;   /* 唯一的点缀色：朱砂红 */
+  --serif: "Cormorant Garamond","Noto Serif SC",serif;
+  --mono:  "IBM Plex Mono","Noto Serif SC",monospace;
+}
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--serif);
+  font-size:17px;
+  line-height:1.9;
+  letter-spacing:.02em;
+  min-height:100vh;
+}
+/* 纸张颗粒：细噪点覆盖层 */
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  pointer-events:none;
+  z-index:99;
+  opacity:.5;
+  mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* 纸张边缘的做旧暗角 */
+body::after{
+  content:"";
+  position:fixed; inset:0;
+  pointer-events:none;
+  z-index:98;
+  background:radial-gradient(120% 90% at 50% 8%, transparent 60%, rgba(96,78,48,.10) 100%);
+}
+#app{
+  max-width:41rem;
+  margin:0 auto;
+  padding:0 1.5rem 4rem;
+}
+a{ color:inherit; text-decoration:none; }
+::selection{ background:var(--accent); color:var(--paper); }
+::-webkit-scrollbar{ width:9px; }
+::-webkit-scrollbar-thumb{ background:var(--rule); }
+::-webkit-scrollbar-track{ background:transparent; }
+
+/* ============ MASTHEAD ============ */
+.masthead{
+  padding:4.5rem 0 2.6rem;
+  border-bottom:1px solid var(--rule);
+  margin-bottom:2.8rem;
+  position:relative;
+}
+.masthead-title{
+  display:inline-block;
+  font-family:var(--serif);
+  font-weight:600;
+  font-size:2.6rem;
+  line-height:1.1;
+  letter-spacing:.04em;
+  color:var(--ink);
+}
+.masthead-title::after{
+  content:"";
+  display:block;
+  width:2.2rem; height:3px;
+  margin-top:.7rem;
+  background:var(--accent);
+}
+.masthead-tagline{
+  margin-top:1.1rem;
+  font-family:var(--mono);
+  font-size:.74rem;
+  letter-spacing:.14em;
+  color:var(--ink-soft);
+  text-transform:uppercase;
+}
+.masthead-nav{
+  margin-top:1.8rem;
+  display:flex; gap:1.6rem;
+  font-family:var(--mono);
+  font-size:.8rem;
+  letter-spacing:.06em;
+}
+.masthead-nav a{
+  color:var(--ink-soft);
+  border-bottom:1px solid transparent;
+  padding-bottom:2px;
+  transition:color .18s, border-color .18s;
+}
+.masthead-nav a:hover{ color:var(--accent); border-color:var(--accent); }
+.masthead-nav a.on{ color:var(--ink); border-bottom:1px solid var(--accent); }
+/* 刊号小标签 */
+.issue{
+  position:absolute; top:4.2rem; right:0;
+  font-family:var(--mono);
+  font-size:.7rem;
+  letter-spacing:.12em;
+  color:var(--ink-faint);
+  text-align:right;
+}
+.issue b{ color:var(--accent); font-weight:500; }
+
+/* ============ INDEX LIST ============ */
+.post-list{ list-style:none; }
+.post-item{
+  border-bottom:1px solid var(--rule);
+}
+.post-item:first-child{ border-top:1px solid var(--rule); }
+.post-item a{
+  display:flex;
+  align-items:baseline;
+  gap:1.2rem;
+  padding:1.35rem .2rem;
+  transition:background .18s;
+}
+.post-item .no{
+  font-family:var(--mono);
+  font-size:.7rem;
+  color:var(--ink-faint);
+  letter-spacing:.06em;
+  min-width:2.4rem;
+  flex-shrink:0;
+  transition:color .18s;
+}
+.post-item .pt{
+  font-family:var(--serif);
+  font-size:1.22rem;
+  font-weight:500;
+  line-height:1.4;
+  color:var(--ink);
+  flex:1;
+  overflow-wrap:break-word;
+  transition:color .18s, transform .18s;
+}
+.post-item .pd{
+  font-family:var(--mono);
+  font-size:.72rem;
+  color:var(--ink-faint);
+  letter-spacing:.04em;
+  flex-shrink:0;
+  white-space:nowrap;
+}
+.post-item a:hover .no{ color:var(--accent); }
+.post-item a:hover .pt{ color:var(--accent); transform:translateX(3px); }
+.post-item a:hover .pd{ color:var(--ink-soft); }
+/* 列表底部的一句旁白 */
+.list-note{
+  margin-top:2.4rem;
+  font-family:var(--mono);
+  font-size:.74rem;
+  letter-spacing:.1em;
+  color:var(--ink-faint);
+  text-align:center;
+}
+.list-note b{ color:var(--accent); font-weight:500; }
+@media (max-width:600px){
+  .post-item a{ flex-wrap:wrap; gap:.2rem .9rem; padding:1.15rem 0; }
+  .post-item .no{ min-width:2rem; }
+  .post-item .pd{ font-size:.66rem; }
+  .post-item .pt{ flex-basis:100%; order:3; font-size:1.12rem; }
+}
+
+/* ============ POST PAGE ============ */
+.back{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:.74rem;
+  letter-spacing:.08em;
+  color:var(--ink-soft);
+  margin-bottom:2.2rem;
+  border-bottom:1px solid transparent;
+  padding-bottom:2px;
+  transition:color .18s,border-color .18s;
+}
+.back:hover{ color:var(--accent); border-color:var(--accent); }
+.post-head .kicker{
+  font-family:var(--mono);
+  font-size:.7rem;
+  letter-spacing:.18em;
+  color:var(--accent);
+  text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.post-head h1{
+  font-family:var(--serif);
+  font-weight:600;
+  font-size:2.3rem;
+  line-height:1.25;
+  letter-spacing:.02em;
+}
+.post-meta{
+  margin:1.4rem 0 0;
+  display:flex; gap:1.4rem; flex-wrap:wrap;
+  font-family:var(--mono);
+  font-size:.72rem;
+  letter-spacing:.08em;
+  color:var(--ink-soft);
+}
+.post-meta .tag{ color:var(--accent); }
+.post-body{
+  margin-top:2.6rem;
+  padding-top:2.2rem;
+  border-top:1px solid var(--rule);
+  font-size:1.02rem;
+  color:var(--ink);
+}
+.post-body p{ margin-bottom:1.5rem; }
+.post-body h2{
+  font-family:var(--serif);
+  font-size:1.5rem; font-weight:600;
+  margin:2.6rem 0 1rem;
+  padding-left:.8rem;
+  border-left:3px solid var(--accent);
+}
+.post-body h3{
+  font-family:var(--serif);
+  font-size:1.2rem; font-weight:600;
+  margin:2rem 0 .8rem;
+}
+.post-body a{
+  color:var(--accent);
+  border-bottom:1px solid var(--accent);
+  padding-bottom:1px;
+  transition:opacity .18s;
+}
+.post-body a:hover{ opacity:.65; }
+.post-body blockquote{
+  margin:2rem 0;
+  padding:1.2rem 1.5rem;
+  background:var(--paper-deep);
+  border-left:3px solid var(--accent);
+  font-style:italic;
+  color:var(--ink-soft);
+}
+.post-body blockquote p:last-child{ margin-bottom:0; }
+.post-body ul,.post-body ol{ margin:0 0 1.5rem 1.3rem; }
+.post-body li{ margin-bottom:.4rem; }
+.post-body code{
+  font-family:var(--mono);
+  font-size:.86em;
+  background:var(--paper-deep);
+  padding:.15em .45em;
+  color:var(--accent);
+}
+.post-body pre{
+  margin:1.8rem 0;
+  padding:1.2rem 1.3rem;
+  background:#2b2620;
+  color:#e8e0cd;
+  overflow-x:auto;
+  font-size:.85rem;
+  line-height:1.6;
+}
+.post-body pre code{ background:none; color:inherit; padding:0; }
+.post-body img{
+  max-width:100%;
+  display:block;
+  margin:2rem auto;
+  filter:sepia(.15) contrast(.98);
+}
+.post-body hr{
+  border:none;
+  margin:2.6rem auto;
+  text-align:center;
+}
+.post-body hr::after{
+  content:"◆";
+  color:var(--accent);
+  font-size:.7rem;
+  letter-spacing:.6em;
+}
+.post-nav{
+  margin-top:3.2rem;
+  padding-top:1.6rem;
+  border-top:1px solid var(--rule);
+  display:flex; justify-content:space-between; gap:1rem;
+  font-family:var(--mono); font-size:.74rem;
+}
+.post-nav a{ color:var(--ink-soft); border-bottom:1px solid transparent; padding-bottom:2px; transition:.18s; }
+.post-nav a:hover{ color:var(--accent); border-color:var(--accent); }
+@media (max-width:600px){
+  .post-head h1{ font-size:1.75rem; }
+  .post-body{ font-size:.98rem; }
+}
+
+/* ============ ABOUT / FOOTER / MOTION ============ */
+.about{ max-width:36rem; }
+.about h1{
+  font-family:var(--serif); font-size:2rem; font-weight:600;
+  margin-bottom:1.8rem;
+}
+.about .bio{ margin-bottom:1.5rem; color:var(--ink); }
+.about .links{
+  margin-top:2.2rem;
+  padding-top:1.6rem;
+  border-top:1px solid var(--rule);
+  font-family:var(--mono); font-size:.78rem;
+  display:flex; gap:1.6rem; flex-wrap:wrap;
+}
+.about .links a{ color:var(--ink-soft); border-bottom:1px solid transparent; padding-bottom:2px; transition:.18s; }
+.about .links a:hover{ color:var(--accent); border-color:var(--accent); }
+.contact-table{
+  margin-top:2rem;
+  width:100%;
+  border-collapse:collapse;
+  font-family:var(--mono); font-size:.76rem;
+}
+.contact-table td{
+  padding:.55rem .2rem;
+  border-bottom:1px dotted var(--rule);
+  color:var(--ink-soft);
+}
+.contact-table td:first-child{ color:var(--accent); width:7.5rem; letter-spacing:.1em; }
+.colophon{
+  margin-top:5rem;
+  padding-top:1.6rem;
+  border-top:1px solid var(--rule);
+  font-family:var(--mono);
+  font-size:.68rem;
+  letter-spacing:.12em;
+  color:var(--ink-faint);
+  display:flex; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+  text-transform:uppercase;
+}
+.colophon b{ color:var(--accent); font-weight:500; }
+/* 页面切换动画：安静地浮现 */
+.fade-in{ animation:rise .5s ease both; }
+.fade-in.d1{ animation-delay:.06s; }
+.fade-in.d2{ animation-delay:.12s; }
+.fade-in.d3{ animation-delay:.18s; }
+@keyframes rise{
+  from{ opacity:0; transform:translateY(10px); }
+  to{ opacity:1; transform:none; }
+}
+@media (prefers-reduced-motion:reduce){
+  *{ animation:none !important; transition:none !important; }
+}
+@media (max-width:600px){
+  #app{ padding:0 1.1rem 3rem; }
+  .masthead{ padding:2.8rem 0 1.8rem; margin-bottom:2rem; }
+  .masthead-title{ font-size:2rem; }
+  .issue{ top:2.6rem; }
+  .post-body blockquote{ padding:1rem 1.1rem; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="masthead" id="masthead">
+    <a class="masthead-title" href="#/" id="siteTitle"></a>
+    <p class="masthead-tagline" id="siteTagline"></p>
+    <nav class="masthead-nav" id="siteNav"></nav>
+  </header>
+
+  <main id="view" aria-live="polite"></main>
+
+  <footer class="colophon" id="colophon"></footer>
+</div>
+<script src="site.js"></script>
+<script src="posts.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
