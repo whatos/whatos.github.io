@@ -1,0 +1,76 @@
+# ====== 纸屿博客 · Decap CMS 配置（后台编辑器的定义文件） ======
+backend:
+  name: git-gateway
+  branch: main
+  commit_messages:
+    create: "新文章：{{slug}}"
+    update: "更新文章：{{slug}}"
+    delete: "删除文章：{{slug}}"
+    uploadMedia: "上传图片：{{path}}"
+    deleteMedia: "删除图片：{{path}}"
+
+locale: zh_Hans
+media_folder: images
+public_folder: /images
+show_preview_links: false
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  # ---------- 文章 ----------
+  - name: posts
+    label: 文章
+    label_singular: 文章
+    description: "在这里新建、编辑、删除文章"
+    folder: content/posts
+    format: json
+    extension: json
+    create: true
+    slug: "{{fields.slug}}"
+    identifier_field: title
+    summary: "{{title}} · {{date}}"
+    sortable_fields: ["date", "title"]
+    fields:
+      - label: 标题
+        name: title
+        widget: string
+        hint: "文章标题"
+      - label: 日期
+        name: date
+        widget: datetime
+        format: "YYYY-MM-DD"
+        date_format: "YYYY-MM-DD"
+        time_format: false
+        hint: "首页显示的日期，点一下日历选择"
+      - label: 标签
+        name: tags
+        widget: list
+        required: false
+        hint: "输入一个标签后按回车，可加多个，也可不加"
+      - label: 网址标识 slug
+        name: slug
+        widget: string
+        pattern: ["^[a-z0-9][a-z0-9-]*$", "只能用小写英文、数字、连字符"]
+        hint: "小写英文/数字/连字符，如 my-first-post。决定文章网址，一经发布不要改"
+      - label: 正文
+        name: body
+        widget: markdown
+        hint: "支持 Markdown：## 小标题、> 引用、- 列表、**加粗**、[链接](地址)；配图点工具栏的图片按钮上传"
+
+  # ---------- 站点设置 ----------
+  - name: settings
+    label: 站点设置
+    description: "站名、副标题、关于页等"
+    files:
+      - name: site_info
+        label: 基本信息
+        file: content/site.json
+        fields:
+          - { label: 站名, name: title, widget: string }
+          - { label: 副标题, name: tagline, widget: string }
+          - { label: 刊号（右上角装饰文字）, name: issue, widget: string, required: false }
+          - { label: 页脚左侧, name: footerLeft, widget: string, required: false }
+          - { label: 页脚右侧, name: footerRight, widget: string, required: false }
+          - { label: 关于页（支持 Markdown）, name: about, widget: markdown, required: false }
