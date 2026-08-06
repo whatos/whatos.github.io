@@ -11,7 +11,7 @@ backend:
 
 locale: zh_Hans
 media_folder: images
-public_folder: /images
+public_folder: images
 show_preview_links: false
 
 slug:
